@@ -1,0 +1,8 @@
+EmployeeID,FirstName,LastName,Department,JobTitle,Status,ManagerEmployeeID
+1001,Ava,Johnson,Finance,Finance Manager,Active,
+1002,Marcus,Lee,IT,Helpdesk Technician,Active,1003
+1003,Priya,Patel,IT,IT Manager,Active,
+1004,Daniel,Garcia,IT,Helpdesk Technician,Terminated,1003
+1005,Sofia,Nguyen,HR,HR Manager,Active,
+1006,James,Brown,HR,HR Generalist,Active,1005
+1007,Olivia,Martinez,Finance,Accountant,Active,1001

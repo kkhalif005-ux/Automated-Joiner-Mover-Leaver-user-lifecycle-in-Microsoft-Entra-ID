@@ -37,10 +37,53 @@ Two hands-on Identity and Access Management (IAM) projects built in a Microsoft 
    Install-Module Microsoft.Graph -Scope CurrentUser
    ```
 
+## Run Project 1
+
+Run everything from `01-joiner-mover-leaver/scripts`. Replace `yourtenant.onmicrosoft.com` with your tenant's domain. Each script opens a sign-in prompt and asks for the Graph permissions it needs.
+
+```powershell
+cd 01-joiner-mover-leaver\scripts
+
+# 1. One-time setup: create the security groups from the role matrix
+.\New-LabGroups.ps1 -RoleMatrixPath ..\data\role_matrix.csv
+
+# 2. Day 1: preview, then apply
+.\Invoke-JMLSync.ps1 -HRFeedPath ..\data\hr_feed_day1.csv -RoleMatrixPath ..\data\role_matrix.csv -Domain yourtenant.onmicrosoft.com -WhatIf
+.\Invoke-JMLSync.ps1 -HRFeedPath ..\data\hr_feed_day1.csv -RoleMatrixPath ..\data\role_matrix.csv -Domain yourtenant.onmicrosoft.com
+
+# 3. Day 2: the HR feed changes
+.\Invoke-JMLSync.ps1 -HRFeedPath ..\data\hr_feed_day2.csv -RoleMatrixPath ..\data\role_matrix.csv -Domain yourtenant.onmicrosoft.com
+```
+
+What to expect:
+
+| Run | Result |
+|-----|--------|
+| Day 1 | Six users are created, added to their role groups and linked to their managers. |
+| Day 2 | **Mover:** Marcus Lee goes from Finance Accountant to IT Helpdesk Technician, loses `GRP-Finance-Users` and gains `GRP-IT-Users` and `GRP-IT-Helpdesk`. **Leaver:** Daniel Garcia is disabled, his sessions are revoked and his groups removed. **Joiner:** Olivia Martinez is created as a Finance Accountant. |
+
+Each run writes an audit log to `scripts\logs\audit_<timestamp>.csv`. To use your own HR feed, keep the same column headers as the sample feeds and make sure every Department and JobTitle pair has a row in `role_matrix.csv`; rows without a matching role are skipped and logged.
+
+Then follow [process.md](01-joiner-mover-leaver/docs/process.md) for the process behind the script and [access-review.md](01-joiner-mover-leaver/docs/access-review.md) to set up the quarterly review.
+
+## Run Project 2
+
+1. Set up SAML SSO with [saml-sso-setup.md](02-sso-conditional-access-pim/docs/saml-sso-setup.md).
+2. Deploy the Conditional Access policies in report-only mode, with your break-glass account excluded:
+
+   ```powershell
+   cd 02-sso-conditional-access-pim\scripts
+   .\Deploy-ConditionalAccess.ps1 -PolicyPath ..\policies -BreakGlassUpn breakglass@yourtenant.onmicrosoft.com
+   ```
+
+   Review the report-only results in the sign-in logs, then switch the policies on in the portal.
+3. Set up just-in-time admin access with [pim-setup.md](02-sso-conditional-access-pim/docs/pim-setup.md).
+4. Use [troubleshooting-runbook.md](02-sso-conditional-access-pim/docs/troubleshooting-runbook.md) to diagnose failed sign-ins.
+
 ## Repo structure
 
 ```
-iam-home-lab/
+.
 ├── 01-joiner-mover-leaver/
 │   ├── data/          # Fake HR feeds and the role matrix
 │   ├── scripts/       # Group setup and lifecycle sync scripts
@@ -58,3 +101,7 @@ iam-home-lab/
 - Testing Conditional Access in **report-only mode** first prevents lockouts.
 - **Standing admin access is a risk.** PIM makes admins request a role for a limited time, with MFA and a justification.
 - **Sign-in logs** and the AADSTS error codes are the fastest way to troubleshoot SSO.
+
+## License
+
+[MIT](LICENSE)

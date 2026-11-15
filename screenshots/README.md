@@ -1,6 +1,6 @@
 # Screenshots
 
-Evidence from the lab goes here. Nothing has been captured yet.
+Evidence from the lab goes here. Project 1 was run live on Nov 14, 2026 (see the demo results in the main README); screenshots from that run are still to be added.
 
 | File | What it shows |
 |------|---------------|

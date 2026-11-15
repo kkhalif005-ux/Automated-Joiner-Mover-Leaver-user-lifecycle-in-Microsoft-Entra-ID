@@ -11,6 +11,24 @@ Two hands-on Identity and Access Management (IAM) projects built in a Microsoft 
 | 1 | [Joiner-Mover-Leaver automation](01-joiner-mover-leaver/) | An HR CSV drives user provisioning, role-based group assignment, department moves and terminations in Entra ID with PowerShell and Microsoft Graph. Includes audit logging and access reviews. |
 | 2 | [SSO, Conditional Access and PIM](02-sso-conditional-access-pim/) | SAML SSO to an enterprise app, Conditional Access policies (MFA, block legacy auth), just-in-time admin access with PIM, and a troubleshooting runbook for common sign-in errors. |
 
+## Demo results (live run, Nov 14, 2026)
+
+I ran Project 1 end to end in Azure Cloud Shell against my own Entra ID test tenant. All 35 logged actions succeeded, with zero errors.
+
+| Run | Joiners | Movers | Leavers | Group adds | Group removes |
+|-----|:-------:|:------:|:-------:|:----------:|:-------------:|
+| Setup | | | | 7 groups created | |
+| Day 1 | 6 | 0 | 0 | 18 | 0 |
+| Day 2 | 1 (Olivia Martinez) | 1 (Marcus Lee) | 1 (Daniel Garcia) | 4 | 4 |
+
+- **Mover:** Marcus Lee went from Finance Accountant to IT Helpdesk Technician. He gained `GRP-IT-Users` and `GRP-IT-Helpdesk` and lost `GRP-Finance-Users`, with no manual steps.
+- **Leaver:** Daniel Garcia's account was disabled, his sessions were revoked and he was removed from 3 groups.
+- **Preview first:** every run started with `-WhatIf`, which listed the planned changes before anything was applied.
+
+Cloud Shell needed two small fixes: installing the Microsoft Graph user modules, and reusing the Cloud Shell sign-in token because interactive sign-in times out there.
+
+Project 2 is documented and scripted but has not been run in the tenant yet.
+
 ## Skills covered
 
 | Skill | Project 1 | Project 2 |
